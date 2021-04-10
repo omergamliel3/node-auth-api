@@ -2,7 +2,7 @@ import { createConnection, getConnection } from "typeorm";
 import logger from "@shared/logger";
 
 // Run func when importing file
-const main = async () => {
+const start = async () => {
   try {
     // Checks for existing db connection
     const existingConnection = getConnection();
@@ -31,4 +31,4 @@ const main = async () => {
   }
 };
 
-main();
+start();

@@ -56,7 +56,7 @@ export const loginUser = async (
 ) => {
   const { username, password } = req.body;
   try {
-    const repository = await getConnection().getRepository(User);
+    const repository = getConnection().getRepository(User);
     const result = await repository.find(username);
 
     if (!result.length) {
