@@ -51,6 +51,7 @@
       "@shared/*": ["src/shared/*"],
       "@routes/*": ["src/api/v1/routes/*"],
       "@middlewares/*": ["src/middlewares/*"],
+      "@handlers/*": ["src/api/v1/handlers"],
       "@controllers/*": ["src/api/v1/controllers/*"],
       "@database": ["src/database/connect"],
       "@migration/*": ["src/migration/*"],
