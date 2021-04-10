@@ -1,0 +1,4 @@
+1. Node, express, typescript setup
+2. Setup authentication routes with static data
+3. Setup Postgres
+4. Setup TypeOrm
