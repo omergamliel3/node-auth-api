@@ -8,7 +8,7 @@ import rateLimit from "express-rate-limit";
 import express, { NextFunction, Request, Response } from "express";
 import baseRoutes from "src/api/routes";
 import errorMiddleware from "@middlewares/error.middleware";
-import { DEVELOPMENT, PRODUCTION } from "@shared/constants";
+import { apiLimiterMsg, DEVELOPMENT, PRODUCTION } from "@shared/constants";
 
 const app = express();
 const baseAPIEndpoint = "/api";
@@ -25,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 100, // max requests pre windowMs
+  message: apiLimiterMsg,
 });
 app.use(baseAPIEndpoint, apiLimiter);
 
