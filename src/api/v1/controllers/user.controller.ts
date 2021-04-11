@@ -57,21 +57,21 @@ export const loginUser = async (
   const { username, password } = req.body;
   try {
     const repository = getConnection().getRepository(User);
-    const result = await repository.find(username);
+    const user = await repository.findOne(username);
 
-    if (!result.length) {
+    if (!user) {
       throw new Error("No username found");
     }
 
-    const match = await bcrypt.compare(password, result[0].password);
+    const match = await bcrypt.compare(password, user.password);
     if (!match) {
       throw new Error("Wrong password");
     }
 
     const token = jwt.sign(
       {
-        username: result[0].username,
-        userId: result[0].id,
+        username: user.username,
+        userId: user.id,
       },
       process.env.JWT_SECRET_KEY as string,
       {
