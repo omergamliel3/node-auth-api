@@ -19,7 +19,7 @@ const start = async () => {
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ["src/entities/*.ts"],
+      entities: ["src/orm/*.ts"],
       synchronize: true,
       logging: false,
     }).then(() => {

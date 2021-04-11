@@ -1,10 +1,18 @@
 import User from "@entities/user";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import { bodyMissingProps, noValidEntryFound } from "@shared/constants";
+import {
+  bodyMissingProps,
+  cannotPerformUpdate,
+  noValidEntryFound,
+  usernameExists,
+  usernameNotFound,
+  wrongPassword,
+} from "@shared/constants";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import { getConnection } from "typeorm";
+import logger from "@shared/logger";
 
 // Register user
 export const registerUser = async (
@@ -13,17 +21,15 @@ export const registerUser = async (
   next: NextFunction
 ) => {
   const { username, password } = req.body;
-
-  if (!username || !password) {
-    throw new Error(bodyMissingProps);
-  }
-
   try {
+    if (!username || !password) {
+      throw new Error(bodyMissingProps);
+    }
     const repository = getConnection().getRepository(User);
-    const result = await repository.find(username);
+    const result = await repository.findOne({ username });
 
-    if (result.length) {
-      throw new Error("Username already exists");
+    if (result) {
+      throw new Error(usernameExists);
     }
 
     const user = new User();
@@ -38,7 +44,7 @@ export const registerUser = async (
       },
       process.env.JWT_SECRET_KEY as string,
       {
-        expiresIn: "7d",
+        expiresIn: process.env.JWT_EXPIRED_IN as string,
       }
     );
 
@@ -57,15 +63,15 @@ export const loginUser = async (
   const { username, password } = req.body;
   try {
     const repository = getConnection().getRepository(User);
-    const user = await repository.findOne(username);
+    const user = await repository.findOne({ username });
 
     if (!user) {
-      throw new Error("No username found");
+      throw new Error(usernameNotFound);
     }
 
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
-      throw new Error("Wrong password");
+      throw new Error(wrongPassword);
     }
 
     const token = jwt.sign(
@@ -75,7 +81,7 @@ export const loginUser = async (
       },
       process.env.JWT_SECRET_KEY as string,
       {
-        expiresIn: "7d",
+        expiresIn: process.env.JWT_EXPIRED_IN as string,
       }
     );
 
@@ -94,19 +100,23 @@ export const updateUser = async (
   const { userId } = req.params;
   const { username, password } = req.body;
   const updateOps: { [key: string]: any } = {};
-  if (username) {
-    updateOps.username = username;
-  }
-  if (password) {
-    updateOps.password = bcrypt.hashSync(password, 10);
-  }
+
   try {
+    if (!username && !password) {
+      throw new Error(cannotPerformUpdate);
+    }
+    if (username) {
+      updateOps.username = username;
+    }
+    if (password) {
+      updateOps.password = bcrypt.hashSync(password, 10);
+    }
     const repository = getConnection().getRepository(User);
     const result = await repository.update(userId, {
       ...updateOps,
     });
     if (result.affected && result.affected > 0) {
-      return res.status(StatusCodes.OK);
+      return res.status(StatusCodes.OK).send();
     }
     res.status(StatusCodes.NOT_FOUND).json({
       message: noValidEntryFound,
@@ -123,11 +133,12 @@ export const deleteUser = async (
   next: NextFunction
 ) => {
   const { userId } = req.params;
+  logger.info(userId);
   try {
     const repository = getConnection().getRepository(User);
-    const result = await repository.delete(userId);
+    const result = await repository.delete({ id: userId });
     if (result.affected && result.affected > 0) {
-      return res.status(StatusCodes.OK);
+      return res.status(StatusCodes.OK).send();
     }
     res.status(StatusCodes.NOT_FOUND).json({
       message: noValidEntryFound,
