@@ -1,4 +1,9 @@
-1. Node, express, typescript setup
-2. Setup authentication routes with static data
-3. Setup Postgres
-4. Setup TypeOrm
+1. Node, express, typescript setup - Done
+2. Setup authentication routes with static data - Done
+3. Setup TypeOrm & Postgres - Done
+
+Reading: 
+1. CORS
+2. RateLimit
+3. Checking for existing database connection ?
+4. Wait to database connection ? 

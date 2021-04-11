@@ -1,16 +1,19 @@
-import { createConnection } from "typeorm";
+import { createConnection, getConnection } from "typeorm";
 import logger from "@shared/logger";
 
 // Run func when importing file
 const start = async () => {
   try {
-    // Checks for existing db connection ?
-    // const existingConnection = getConnection();
-    // if (existingConnection) {
-    //   logger.info("Terminate staled connection");
-    //   await existingConnection.close();
-    // }
-
+    // Checks for existing db connection
+    const existingConnection = getConnection();
+    if (existingConnection) {
+      logger.info("Terminate staled connection");
+      await existingConnection.close();
+    }
+  } catch (error) {
+    logger.info("No DB existing connection");
+  }
+  try {
     // Create Postgres DB connection
     createConnection({
       type: "postgres",
