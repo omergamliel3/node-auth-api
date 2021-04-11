@@ -1,6 +1,5 @@
 import { Router } from "express";
 import * as UserController from "@controllers/user.controller";
-import validateParamsIdMiddleware from "@middlewares/validateId.middleware.ts";
 import authMiddleware from "@middlewares/auth.middleware";
 
 const router = Router();
@@ -21,22 +20,12 @@ router.post("/login", UserController.loginUser);
  *                      Update user - "PUT /api/v1/users/:userId"
  ******************************************************************************/
 
-router.put(
-  "/:userId",
-  authMiddleware,
-  validateParamsIdMiddleware,
-  UserController.updateUser
-);
+router.put("/:userId", authMiddleware, UserController.updateUser);
 
 /******************************************************************************
  *                      Delete user - "DELETE /api/v1/users/:userId"
  ******************************************************************************/
 
-router.delete(
-  "/:userId",
-  authMiddleware,
-  validateParamsIdMiddleware,
-  UserController.deleteUser
-);
+router.delete("/:userId", authMiddleware, UserController.deleteUser);
 
 export default router;
