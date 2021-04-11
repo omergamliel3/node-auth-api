@@ -1,6 +1,5 @@
 import "./pre-start"; // Must be the first import
-
-import "@database/connect";
+import "@database";
 import app from "@server";
 import logger from "@shared/logger";
 
