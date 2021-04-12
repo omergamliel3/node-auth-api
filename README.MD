@@ -11,4 +11,4 @@ Simple RESTful Auth API made with Node JS, TypeScript, Express, TypeOrm, Postgre
 
 # Author 🙋
 
-- **Omer Gamliel** - [LinkedIn](https://www.linkedin.com/in/omer-gamliel-6a813a188/)
+- **Omer Gamliel**
