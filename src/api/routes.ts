@@ -1,12 +1,17 @@
 import { Router } from "express";
 import V1Routes from "./v1/v1.routes";
 
-// Init router
-const router = Router();
+class ApiRoutes {
+  public router = Router();
 
-// Add sub-routes
+  constructor() {
+    this.initializeRoutes();
+  }
 
-router.use("/v1", V1Routes);
+  private initializeRoutes() {
+    const v1Routes = new V1Routes();
+    this.router.use("/v1", v1Routes.router);
+  }
+}
 
-// Export the base-router
-export default router;
+export default ApiRoutes;

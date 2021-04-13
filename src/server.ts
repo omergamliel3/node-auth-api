@@ -6,48 +6,78 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
 import express, { NextFunction, Request, Response } from "express";
-import baseRoutes from "src/api/routes";
+import ApiRoutes from "src/api/routes";
 import errorMiddleware from "@middlewares/error.middleware";
-import { apiLimiterMsg, DEVELOPMENT, PRODUCTION } from "@shared/constants";
+import {
+  apiLimiterMsg,
+  DEVELOPMENT,
+  PRODUCTION,
+  baseAPIEndpoint,
+} from "@shared/constants";
+import logger from "@shared/logger";
 
-const app = express();
-const baseAPIEndpoint = "/api";
+export default class App {
+  public app: express.Application;
+  public port: number;
 
-/************************************************************************************
- *                              Set basic express settings
- ***********************************************************************************/
+  constructor(port: number) {
+    this.app = express();
+    this.port = port;
+    this.initApp();
+  }
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+  // Init app
+  private initApp() {
+    this.initializeMiddlewares();
+    this.initializeRoutes();
+    this.initializeErrorHandling();
+  }
 
-// Setup rate limit
-const apiLimiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 100, // max requests pre windowMs
-  message: apiLimiterMsg,
-});
-app.use(baseAPIEndpoint, apiLimiter);
+  // Init middlewares
+  private initializeMiddlewares() {
+    this.app.use(cors());
 
-if (process.env.NODE_ENV === DEVELOPMENT) {
-  app.use(morgan("dev"));
+    if (process.env.NODE_ENV === DEVELOPMENT) {
+      this.app.use(morgan("dev"));
+    }
+
+    // Security
+    if (process.env.NODE_ENV === PRODUCTION) {
+      this.app.use(helmet());
+    }
+
+    const apiLimiter = rateLimit({
+      windowMs: 60 * 1000, // 1 minute
+      max: 100, // max requests pre windowMs
+      message: apiLimiterMsg,
+    });
+    this.app.use(baseAPIEndpoint, apiLimiter);
+
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
+  }
+
+  // Init routes
+  private initializeRoutes() {
+    const apiRoutes = new ApiRoutes();
+    this.app.use(baseAPIEndpoint, apiRoutes.router);
+  }
+
+  // Init error handling
+  private initializeErrorHandling() {
+    // Handle unknown routes
+    this.app.use((req: Request, res: Response, next: NextFunction) => {
+      const error = new Error("Not found");
+      next(error);
+    });
+
+    // Handle route errors
+    this.app.use(errorMiddleware);
+  }
+
+  public listen() {
+    this.app.listen(this.port, () => {
+      logger.info(`App listening on port ${this.port}`);
+    });
+  }
 }
-
-// Security
-if (process.env.NODE_ENV === PRODUCTION) {
-  app.use(helmet());
-}
-
-// Add APIs
-app.use(baseAPIEndpoint, baseRoutes);
-
-// Handle unknown routes
-app.use((req: Request, res: Response, next: NextFunction) => {
-  const error = new Error("Not found");
-  next(error);
-});
-
-// Handle route errors
-app.use(errorMiddleware);
-
-export default app;

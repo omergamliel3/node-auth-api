@@ -1,31 +1,39 @@
-import { Router } from "express";
-import * as UserController from "@controllers/user.controller";
+import UserController from "@controllers/user.controller";
 import authMiddleware from "@middlewares/auth.middleware";
+import BaseRoute from "./base.route";
 
-const router = Router();
+class UserRoute extends BaseRoute {
+  private controller: UserController;
+  constructor() {
+    super();
+    this.controller = new UserController();
+  }
 
-/******************************************************************************
- *                      Create new user - "POST /api/v1/users/register"
- ******************************************************************************/
+  initializeRoutes() {
+    /******************************************************************************
+     *                      Create new user - "POST /api/v1/users/register"
+     ******************************************************************************/
 
-router.post("/register", UserController.registerUser);
+    this.router.post("/register", this.controller.registerUser);
 
-/******************************************************************************
- *                      Login user - "POST /api/v1/users/login"
- ******************************************************************************/
+    /******************************************************************************
+     *                      Login user - "POST /api/v1/users/login"
+     ******************************************************************************/
 
-router.post("/login", UserController.loginUser);
+    this.router.post("/login", this.controller.loginUser);
 
-/******************************************************************************
- *                      Update user - "PUT /api/v1/users/:userId"
- ******************************************************************************/
+    /******************************************************************************
+     *                      Update user - "PUT /api/v1/users/:userId"
+     ******************************************************************************/
 
-router.put("/:userId", authMiddleware, UserController.updateUser);
+    this.router.put("/:userId", authMiddleware, this.controller.updateUser);
 
-/******************************************************************************
- *                      Delete user - "DELETE /api/v1/users/:userId"
- ******************************************************************************/
+    /******************************************************************************
+     *                      Delete user - "DELETE /api/v1/users/:userId"
+     ******************************************************************************/
 
-router.delete("/:userId", authMiddleware, UserController.deleteUser);
+    this.router.delete("/:userId", authMiddleware, this.controller.deleteUser);
+  }
+}
 
-export default router;
+export default UserRoute;

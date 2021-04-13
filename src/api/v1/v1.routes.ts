@@ -1,12 +1,11 @@
-import { Router } from "express";
-import UserRouter from "./routes/user.route";
+import BaseRoute from "@routes/base.route";
+import UserRoute from "./routes/user.route";
 
-// Init router
-const router = Router();
+class V1Routes extends BaseRoute {
+  initializeRoutes() {
+    const userRoute = new UserRoute();
+    this.router.use("/users", userRoute.router);
+  }
+}
 
-// Add sub-routes
-
-router.use("/users", UserRouter);
-
-// Export the base-router
-export default router;
+export default V1Routes;
