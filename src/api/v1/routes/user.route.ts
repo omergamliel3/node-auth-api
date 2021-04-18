@@ -3,6 +3,7 @@ import authMiddleware from "@middlewares/auth.middleware";
 import BaseRoute from "./base.route";
 
 class UserRoute extends BaseRoute {
+  // ask Maty
   private controller: UserController;
   initializeRoutes() {
     this.controller = new UserController();

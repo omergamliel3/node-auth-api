@@ -1,37 +1,42 @@
 import User from "@entities/user";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import * as constants from "@shared/constants";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getConnection, Repository } from "typeorm";
-import logger from "@shared/logger";
+import { getConnection } from "typeorm";
+import {
+  wrongPasswordErr,
+  usernameNotFoundErr,
+  usernameExistsErr,
+  bodyMissingPropsErr,
+  cannotPerformUpdateErr,
+  noValidEntryFoundErr,
+} from "@shared/errors";
 
 export default class UserController {
-  private repository: Repository<User>;
-
-  constructor() {
-    this.repository = getConnection().getRepository(User);
-  }
+  // ask Maty
+  //constructor(private repository = getConnection().getRepository(User)) {}
 
   // Register user
   async registerUser(req: Request, res: Response, next: NextFunction) {
     const { username, password } = req.body;
     try {
       if (!username || !password) {
-        throw new Error(constants.bodyMissingProps);
+        throw bodyMissingPropsErr;
       }
 
-      const result = await this.repository.findOne({ username });
+      const result = await getConnection()
+        .getRepository(User)
+        .findOne({ username });
 
       if (result) {
-        throw new Error(constants.usernameExists);
+        throw usernameExistsErr;
       }
 
       const user = new User();
       user.username = username;
       user.password = bcrypt.hashSync(password, 10);
-      const createdUser = await this.repository.save(user);
+      const createdUser = await getConnection().getRepository(User).save(user);
 
       const token = jwt.sign(
         {
@@ -43,7 +48,6 @@ export default class UserController {
           expiresIn: process.env.JWT_EXPIRED_IN as string,
         }
       );
-
       res.status(StatusCodes.CREATED).json(token);
     } catch (err) {
       next(err);
@@ -54,15 +58,17 @@ export default class UserController {
   async loginUser(req: Request, res: Response, next: NextFunction) {
     const { username, password } = req.body;
     try {
-      const user = await this.repository.findOne({ username });
+      const user = await getConnection()
+        .getRepository(User)
+        .findOne({ username });
 
       if (!user) {
-        throw new Error(constants.usernameNotFound);
+        throw usernameNotFoundErr;
       }
 
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
-        throw new Error(constants.wrongPassword);
+        throw wrongPasswordErr;
       }
 
       const token = jwt.sign(
@@ -90,7 +96,7 @@ export default class UserController {
 
     try {
       if (!username && !password) {
-        throw new Error(constants.cannotPerformUpdate);
+        throw cannotPerformUpdateErr;
       }
       if (username) {
         updateOps.username = username;
@@ -99,15 +105,15 @@ export default class UserController {
         updateOps.password = bcrypt.hashSync(password, 10);
       }
 
-      const result = await this.repository.update(userId, {
-        ...updateOps,
-      });
+      const result = await getConnection()
+        .getRepository(User)
+        .update(userId, {
+          ...updateOps,
+        });
       if (result.affected && result.affected > 0) {
         return res.status(StatusCodes.OK).send();
       }
-      res.status(StatusCodes.NOT_FOUND).json({
-        message: constants.noValidEntryFound,
-      });
+      throw noValidEntryFoundErr;
     } catch (err) {
       next(err);
     }
@@ -116,15 +122,14 @@ export default class UserController {
   // Delete user
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.params;
-    logger.info(userId);
     try {
-      const result = await this.repository.delete({ id: userId });
+      const result = await getConnection()
+        .getRepository(User)
+        .delete({ id: userId });
       if (result.affected && result.affected > 0) {
         return res.status(StatusCodes.OK).send();
       }
-      res.status(StatusCodes.NOT_FOUND).json({
-        message: constants.noValidEntryFound,
-      });
+      throw noValidEntryFoundErr;
     } catch (err) {
       next(err);
     }
