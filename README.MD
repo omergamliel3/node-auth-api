@@ -9,6 +9,6 @@ Simple RESTful Auth API made with Node JS, TypeScript, Express, TypeOrm, Postgre
 - **[TypeOrm](https://github.com/typeorm/typeorm)**
 - **[JWT](https://jwt.io/)**
 
-# Author 🙋
+# Author
 
 - **Omer Gamliel**
