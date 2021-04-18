@@ -52,9 +52,8 @@ export default class App {
       message: apiLimiterMsg,
     });
     this.app.use(baseAPIEndpoint, apiLimiter);
-
     this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(express.urlencoded({ extended: false })); // ?
   }
 
   // Init routes

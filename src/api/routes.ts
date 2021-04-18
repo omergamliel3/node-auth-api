@@ -1,5 +1,4 @@
 import BaseRoute from "@routes/base.route";
-import { Router } from "express";
 import V1Routes from "./v1/v1.routes";
 
 class ApiRoutes extends BaseRoute {

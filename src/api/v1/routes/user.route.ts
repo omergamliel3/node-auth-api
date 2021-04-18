@@ -4,12 +4,9 @@ import BaseRoute from "./base.route";
 
 class UserRoute extends BaseRoute {
   private controller: UserController;
-  constructor() {
-    super();
-    this.controller = new UserController();
-  }
-
   initializeRoutes() {
+    this.controller = new UserController();
+
     /******************************************************************************
      *                      Create new user - "POST /api/v1/users/register"
      ******************************************************************************/

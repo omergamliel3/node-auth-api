@@ -12,7 +12,6 @@ createDbConnection()
     app.listen();
   })
   .catch((err) => {
-    logger.err("Error connecting to DB");
     logger.err(err, true);
     process.exit(1);
   });
