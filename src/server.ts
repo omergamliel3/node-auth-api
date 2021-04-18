@@ -6,7 +6,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
 import express, { NextFunction, Request, Response } from "express";
-import ApiRoutes from "src/api/routes";
+import ApiRoutes from "./api/routes";
 import errorMiddleware from "@middlewares/error.middleware";
 import {
   apiLimiterMsg,
