@@ -1,3 +1,4 @@
+import "./pre-start/index";
 import { createDbConnection } from "@database";
 import App from "@server";
 import logger from "@shared/logger";
