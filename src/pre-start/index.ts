@@ -3,18 +3,20 @@ import path from "path";
 import dotenv from "dotenv";
 
 import commandLineArgs from "command-line-args";
+import { DEVELOPMENT, PRODUCTION } from "@shared/constants";
+import logger from "@shared/logger";
 
 const config = () => {
   const options = commandLineArgs([
     {
       name: "env",
       alias: "e",
-      defaultValue: "development",
+      defaultValue: DEVELOPMENT,
       type: String,
     },
   ]);
 
-  if (options.env !== "production") {
+  if (options.env !== PRODUCTION) {
     return;
   }
   dotenv.config({
