@@ -1,5 +1,3 @@
-
-
 export const apiLimiterMsg =
   "Too many requests created from this IP, please try again after an minute";
 
