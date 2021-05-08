@@ -1,9 +1,10 @@
+import BaseController from "./base.controller";
 import User from "@entities/user";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { getConnection } from "typeorm";
+import { getConnection, Repository } from "typeorm";
 import {
   wrongPasswordErr,
   usernameNotFoundErr,
@@ -13,13 +14,10 @@ import {
   noValidEntryFoundErr,
 } from "@shared/errors";
 
-export default class UserController {
-  // repo is undefined when accessed from class methods
-  // private repository: Repository<User>;
-  // constructor() {
-  //   this.repository = getConnection().getRepository(User);
-  // }
-
+export default class UserController extends BaseController<User> {
+  protected getRepository(): Repository<User> {
+    return getConnection().getRepository(User);
+  }
   // Register user
   async registerUser(req: Request, res: Response, next: NextFunction) {
     const { username, password } = req.body;
@@ -28,9 +26,7 @@ export default class UserController {
         throw bodyMissingPropsErr;
       }
 
-      const result = await getConnection()
-        .getRepository(User)
-        .findOne({ username });
+      const result = await this.repository.findOne({ username });
 
       if (result) {
         throw usernameExistsErr;
@@ -39,7 +35,7 @@ export default class UserController {
       const user = new User();
       user.username = username;
       user.password = bcrypt.hashSync(password, 10);
-      const createdUser = await getConnection().getRepository(User).save(user);
+      const createdUser = await this.repository.save(user);
 
       const token = jwt.sign(
         {
@@ -61,9 +57,7 @@ export default class UserController {
   async loginUser(req: Request, res: Response, next: NextFunction) {
     const { username, password } = req.body;
     try {
-      const user = await getConnection()
-        .getRepository(User)
-        .findOne({ username });
+      const user = await this.repository.findOne({ username });
 
       if (!user) {
         throw usernameNotFoundErr;
@@ -108,11 +102,9 @@ export default class UserController {
         updateOps.password = bcrypt.hashSync(password, 10);
       }
 
-      const result = await getConnection()
-        .getRepository(User)
-        .update(userId, {
-          ...updateOps,
-        });
+      const result = await this.repository.update(userId, {
+        ...updateOps,
+      });
       if (result.affected && result.affected > 0) {
         return res.status(StatusCodes.OK).send();
       }
@@ -126,9 +118,7 @@ export default class UserController {
   async deleteUser(req: Request, res: Response, next: NextFunction) {
     const { userId } = req.params;
     try {
-      const result = await getConnection()
-        .getRepository(User)
-        .delete({ id: userId });
+      const result = await this.repository.delete({ id: userId });
       if (result.affected && result.affected > 0) {
         return res.status(StatusCodes.OK).send();
       }
