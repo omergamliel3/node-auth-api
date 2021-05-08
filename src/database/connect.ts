@@ -1,5 +1,6 @@
 import { createConnection, getConnection } from "typeorm";
 import logger from "@shared/logger";
+import User from "@entities/user";
 
 // Run func when importing file
 export const createDbConnection = async () => {
@@ -22,7 +23,10 @@ export const createDbConnection = async () => {
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    entities: ["src/orm/*.ts"],
+    entities: [User],
+    // Entities are not registered this way
+    //entities: [ '../orm/**' ],
+    migrations: ["src/migration/**/*.ts"],
     synchronize: true,
     logging: false,
   });

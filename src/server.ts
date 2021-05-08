@@ -6,7 +6,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 
 import express, { NextFunction, Request, Response } from "express";
-import ApiRoutes from "src/api/routes";
+import ApiRoutes from "./api/routes";
 import errorMiddleware from "@middlewares/error.middleware";
 import {
   apiLimiterMsg,
@@ -15,6 +15,7 @@ import {
   baseAPIEndpoint,
 } from "@shared/constants";
 import logger from "@shared/logger";
+import { notFoundErr } from "@shared/errors";
 
 export default class App {
   public app: express.Application;
@@ -66,8 +67,7 @@ export default class App {
   private initializeErrorHandling() {
     // Handle unknown routes
     this.app.use((req: Request, res: Response, next: NextFunction) => {
-      const error = new Error("Not found");
-      next(error);
+      next(notFoundErr);
     });
 
     // Handle route errors

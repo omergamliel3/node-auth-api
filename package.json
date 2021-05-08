@@ -6,7 +6,7 @@
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "start:dev": "nodemon -r tsconfig-paths/register src/index.ts",
-    "start:prod": "node -r module-alias/register dist/index.js --env=production"
+    "start:prod": "tsc && node -r module-alias/register dist/index.js --env=production"
   },
   "author": "Omer Gamliel",
   "license": "ISC",
@@ -44,14 +44,14 @@
     }
   },
   "_moduleAliases": {
-    "@entities/*": "dist/orm/*",
-    "@shared/*": "dist/shared/*",
-    "@routes/*": "dist/api/v1/routes/*",
-    "@middlewares/*": "dist/middlewares/*",
-    "@handlers/*": "dist/api/v1/handlers/",
-    "@controllers/*": "dist/api/v1/controllers/*",
+    "@entities": "dist/orm",
+    "@shared": "dist/shared",
+    "@routes": "dist/api/v1/routes",
+    "@middlewares": "dist/middlewares",
+    "@handlers": "dist/api/v1/handlers",
+    "@controllers": "dist/api/v1/controllers",
     "@database": "dist/database/connect",
-    "@migration/*": "dist/migration/*",
+    "@migration": "dist/migration",
     "@server": "dist/server"
   },
   "dependencies": {

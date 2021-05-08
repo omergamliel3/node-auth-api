@@ -1,24 +1,27 @@
-/**
- * Pre-start is where we want to place things that must run BEFORE the express server is started.
- * This is useful for environment variables, command-line arguments, and cron-jobs.
- */
-
 import path from "path";
-import dotenv from "dotenv";
-import commandLineArgs from "command-line-args";
 
-(() => {
-  // Setup command line options
+import dotenv from "dotenv";
+
+import commandLineArgs from "command-line-args";
+import { DEVELOPMENT, PRODUCTION } from "@shared/constants";
+import logger from "@shared/logger";
+
+const config = () => {
   const options = commandLineArgs([
     {
       name: "env",
       alias: "e",
-      defaultValue: "development",
+      defaultValue: DEVELOPMENT,
       type: String,
     },
   ]);
-  // Set the env file
+
+  if (options.env !== PRODUCTION) {
+    return;
+  }
   dotenv.config({
     path: path.join(__dirname, `env/${options.env}.env`),
   });
-})();
+};
+
+config();
