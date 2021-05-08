@@ -14,8 +14,11 @@ import {
 } from "@shared/errors";
 
 export default class UserController {
-  // ask Maty
-  //constructor(private repository = getConnection().getRepository(User)) {}
+  // repo is undefined when accessed from class methods
+  // private repository: Repository<User>;
+  // constructor() {
+  //   this.repository = getConnection().getRepository(User);
+  // }
 
   // Register user
   async registerUser(req: Request, res: Response, next: NextFunction) {

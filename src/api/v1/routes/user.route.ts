@@ -3,9 +3,16 @@ import authMiddleware from "@middlewares/auth.middleware";
 import BaseRoute from "./base.route";
 
 class UserRoute extends BaseRoute {
-  // ask Maty
   private controller: UserController;
+
+  // Does not work this way, [initlizeRoutes] been called by the super class
+  // before the controller is constructed and as a result [this.controller] is undefined.
+  // constructor() {
+  //   super();
+  //   this.controller = new UserController();
+  //}
   initializeRoutes() {
+    // I dont think its a good way to instantiate the controller here
     this.controller = new UserController();
 
     /******************************************************************************
