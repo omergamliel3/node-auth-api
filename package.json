@@ -1,5 +1,5 @@
 {
-  "name": "express-auth",
+  "name": "node-express-auth",
   "version": "1.0.0",
   "description": "RESTful Auth API",
   "scripts": {
