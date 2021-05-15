@@ -17,7 +17,7 @@ class UserRoute extends BaseRoute<UserController> {
     this.router.post(
       "/register",
       validationMiddleware(RegisterDto),
-      this.controller.registerUser
+      this.controller.registerUser.bind(this.controller)
     );
 
     /******************************************************************************
@@ -27,7 +27,7 @@ class UserRoute extends BaseRoute<UserController> {
     this.router.post(
       "/login",
       validationMiddleware(LoginDto),
-      this.controller.loginUser
+      this.controller.loginUser.bind(this.controller)
     );
 
     /******************************************************************************
@@ -38,14 +38,18 @@ class UserRoute extends BaseRoute<UserController> {
       "/:userId",
       validationMiddleware(UpdateDto, true),
       authMiddleware,
-      this.controller.updateUser
+      this.controller.updateUser.bind(this.controller)
     );
 
     /******************************************************************************
      *                      Delete user - "DELETE /api/v1/users/:userId"
      ******************************************************************************/
 
-    this.router.delete("/:userId", authMiddleware, this.controller.deleteUser);
+    this.router.delete(
+      "/:userId",
+      authMiddleware,
+      this.controller.deleteUser.bind(this.controller)
+    );
   }
 }
 
