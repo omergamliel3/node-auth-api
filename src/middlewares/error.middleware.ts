@@ -20,7 +20,6 @@ function errorMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  logger.err(err, false);
   let status: StatusCodes;
   switch (err) {
     case notFoundErr:
