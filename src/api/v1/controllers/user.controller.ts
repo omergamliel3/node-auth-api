@@ -18,10 +18,10 @@ export default class UserController extends BaseController<User> {
   protected getRepository(): Repository<User> {
     return getConnection().getRepository(User);
   }
-  // Register user
-  async registerUser(req: Request, res: Response, next: NextFunction) {
-    const { username, password } = req.body;
-    try {
+
+  registerUser(req: Request, res: Response, next: NextFunction) {
+    return this.exceptionCatcher("registerUser", next, async () => {
+      const { username, password } = req.body;
       if (!username || !password) {
         throw bodyMissingPropsErr;
       }
@@ -47,16 +47,13 @@ export default class UserController extends BaseController<User> {
           expiresIn: process.env.JWT_EXPIRED_IN as string,
         }
       );
-      res.status(StatusCodes.CREATED).json(token);
-    } catch (err) {
-      next(err);
-    }
+      this.returnOkStatus(res, token);
+    });
   }
 
-  // Login user
-  async loginUser(req: Request, res: Response, next: NextFunction) {
-    const { username, password } = req.body;
-    try {
+  loginUser(req: Request, res: Response, next: NextFunction) {
+    return this.exceptionCatcher("loginUser", next, async () => {
+      const { username, password } = req.body;
       const user = await this.repository.findOne({ username });
 
       if (!user) {
@@ -78,20 +75,15 @@ export default class UserController extends BaseController<User> {
           expiresIn: process.env.JWT_EXPIRED_IN as string,
         }
       );
-
-      res.status(StatusCodes.OK).json(token);
-    } catch (err) {
-      next(err);
-    }
+      this.returnOkStatus(res, token);
+    });
   }
 
-  // Update user
-  async updateUser(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.params;
-    const { username, password } = req.body;
-    const updateOps: { [key: string]: any } = {};
-
-    try {
+  updateUser(req: Request, res: Response, next: NextFunction) {
+    return this.exceptionCatcher("updateUser", next, async () => {
+      const { userId } = req.params;
+      const { username, password } = req.body;
+      const updateOps: { [key: string]: any } = {};
       if (!username && !password) {
         throw cannotPerformUpdateErr;
       }
@@ -105,26 +97,24 @@ export default class UserController extends BaseController<User> {
       const result = await this.repository.update(userId, {
         ...updateOps,
       });
+
       if (result.affected && result.affected > 0) {
-        return res.status(StatusCodes.OK).send();
+        this.returnOkStatus(res);
+      } else {
+        throw noValidEntryFoundErr;
       }
-      throw noValidEntryFoundErr;
-    } catch (err) {
-      next(err);
-    }
+    });
   }
 
-  // Delete user
-  async deleteUser(req: Request, res: Response, next: NextFunction) {
-    const { userId } = req.params;
-    try {
+  deleteUser(req: Request, res: Response, next: NextFunction) {
+    return this.exceptionCatcher("deleteUser", next, async () => {
+      const { userId } = req.params;
       const result = await this.repository.delete({ id: userId });
       if (result.affected && result.affected > 0) {
-        return res.status(StatusCodes.OK).send();
+        this.returnOkStatus(res);
+      } else {
+        throw noValidEntryFoundErr;
       }
-      throw noValidEntryFoundErr;
-    } catch (err) {
-      next(err);
-    }
+    });
   }
 }
