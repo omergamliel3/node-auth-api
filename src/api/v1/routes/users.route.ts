@@ -36,7 +36,7 @@ class UserRoute extends BaseRoute<UserController> {
 
     this.router.put(
       "/:userId",
-      validationMiddleware(UpdateDto),
+      validationMiddleware(UpdateDto, true),
       authMiddleware,
       this.controller.updateUser
     );
