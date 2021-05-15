@@ -1,4 +1,4 @@
-import BaseController from "./base.controller";
+import BaseController from "@controllers/base.controller";
 import User from "@entities/user";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";

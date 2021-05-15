@@ -50,8 +50,8 @@
       "@shared/*": ["./src/shared/*"],
       "@routes/*": ["./src/api/v1/routes/*"],
       "@middlewares/*": ["./src/middlewares/*"],
-      "@handlers/*": ["./src/api/v1/handlers/"],
       "@controllers/*": ["./src/api/v1/controllers/*"],
+      "@dto/*": ["./src/api/v1/dto/*"],
       "@database": ["./src/database/connect"],
       "@migration/*": ["./src/migration/*"],
       "@server": ["./src/server"]

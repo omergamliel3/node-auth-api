@@ -1,7 +1,7 @@
 import UserController from "@controllers/users.controller";
 import authMiddleware from "@middlewares/auth.middleware";
 import validationMiddleware from "@middlewares/validation.middleware";
-import { LoginDto, RegisterDto, UpdateDto } from "../dto/users.dto";
+import { LoginDto, RegisterDto, UpdateDto } from "@dto/users.dto";
 import BaseRoute from "./base.route";
 
 class UserRoute extends BaseRoute<UserController> {

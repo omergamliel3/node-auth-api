@@ -48,7 +48,7 @@
     "@shared": "dist/shared",
     "@routes": "dist/api/v1/routes",
     "@middlewares": "dist/middlewares",
-    "@handlers": "dist/api/v1/handlers",
+    "@dto": "dist/api/v1/dto",
     "@controllers": "dist/api/v1/controllers",
     "@database": "dist/database/connect",
     "@migration": "dist/migration",
