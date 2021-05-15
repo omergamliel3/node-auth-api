@@ -19,7 +19,7 @@ export default abstract class BaseController<T> {
     cb: () => Promise<void>
   ) {
     cb().catch((error) => {
-      const errorLog = `${FILE_NAME}\\${functionName}\\${error.message}`;
+      const errorLog = `File: ${FILE_NAME}, Func: ${functionName}, Error: ${error.message}`;
       logger.err(errorLog);
       next(error);
     });
