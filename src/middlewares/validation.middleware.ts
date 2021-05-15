@@ -21,7 +21,9 @@ function validationMiddleware(
       }
     );
     if (valdationErrors.length > 0) {
-      logger.err(`${FILE_NAME}\\${FUNC_NAME}\\`);
+      logger.err(
+        `File: ${FILE_NAME}, Func: ${FUNC_NAME}, Error: DTO is invalid`
+      );
       next(new Error("Bad request"));
     } else {
       next();
