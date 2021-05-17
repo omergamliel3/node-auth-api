@@ -4,12 +4,8 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
 import { getConnection, Repository } from "typeorm";
-import {
-  wrongPasswordErr,
-  usernameNotFoundErr,
-  usernameExistsErr,
-  noValidEntryFoundErr,
-} from "@shared/errors";
+import { HttpException } from "@shared/exceptions";
+import { StatusCodes } from "http-status-codes";
 
 export default class UserController extends BaseController<User> {
   protected getRepository(): Repository<User> {
@@ -23,7 +19,10 @@ export default class UserController extends BaseController<User> {
       const result = await this.repository.findOne({ username });
 
       if (result) {
-        throw usernameExistsErr;
+        throw new HttpException(
+          StatusCodes.CONFLICT,
+          "Username already exists"
+        );
       }
 
       const user = new User();
@@ -51,12 +50,12 @@ export default class UserController extends BaseController<User> {
       const user = await this.repository.findOne({ username });
 
       if (!user) {
-        throw usernameNotFoundErr;
+        throw new HttpException(StatusCodes.CONFLICT, "Username not found");
       }
 
       const match = await bcrypt.compare(password, user.password);
       if (!match) {
-        throw wrongPasswordErr;
+        throw new HttpException(StatusCodes.CONFLICT, "Wrong password");
       }
 
       const token = jwt.sign(
@@ -92,7 +91,10 @@ export default class UserController extends BaseController<User> {
       if (result.affected && result.affected > 0) {
         this.returnOkStatus(res);
       } else {
-        throw noValidEntryFoundErr;
+        throw new HttpException(
+          StatusCodes.CONFLICT,
+          "No valid entry found for provided ID"
+        );
       }
     });
   }
@@ -104,7 +106,10 @@ export default class UserController extends BaseController<User> {
       if (result.affected && result.affected > 0) {
         this.returnOkStatus(res);
       } else {
-        throw noValidEntryFoundErr;
+        throw new HttpException(
+          StatusCodes.CONFLICT,
+          "No valid entry found for provided ID"
+        );
       }
     });
   }

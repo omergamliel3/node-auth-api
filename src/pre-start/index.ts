@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 
 import commandLineArgs from "command-line-args";
 import { DEVELOPMENT, PRODUCTION } from "@shared/constants";
-import logger from "@shared/logger";
 
 const config = () => {
   const options = commandLineArgs([

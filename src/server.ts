@@ -15,7 +15,8 @@ import {
   baseAPIEndpoint,
 } from "@shared/constants";
 import logger from "@shared/logger";
-import { notFoundErr } from "@shared/errors";
+import { HttpException } from "@shared/exceptions";
+import { StatusCodes } from "http-status-codes";
 
 export default class App {
   public app: express.Application;
@@ -67,7 +68,7 @@ export default class App {
   private initializeErrorHandling() {
     // Handle unknown routes
     this.app.use((req: Request, res: Response, next: NextFunction) => {
-      next(notFoundErr);
+      next(new HttpException(StatusCodes.NOT_FOUND, "Not found"));
     });
 
     // Handle route errors

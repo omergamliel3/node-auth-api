@@ -1,30 +1,35 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsString, MinLength } from "class-validator";
+import { Trim } from "class-sanitizer";
+
 export class RegisterDto {
-  @IsNotEmpty()
   @IsString()
+  @Trim()
+  @MinLength(5, { message: "Username should be minimum of 5 characters" })
   username: string;
 
-  @IsNotEmpty()
   @IsString()
+  @MinLength(8, { message: "Password should be minimum of 8 characters" })
   password: string;
 }
 
 export class LoginDto {
-  @IsNotEmpty()
   @IsString()
+  @Trim()
+  @IsNotEmpty()
   username: string;
 
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
 export class UpdateDto {
-  @IsNotEmpty()
   @IsString()
+  @Trim()
+  @MinLength(5, { message: "Username should be minimum of 5 characters" })
   username: string;
 
-  @IsNotEmpty()
   @IsString()
+  @MinLength(8, { message: "Password should be minimum of 8 characters" })
   password: string;
 }
